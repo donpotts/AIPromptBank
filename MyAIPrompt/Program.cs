@@ -34,6 +34,7 @@ builder.Services.Configure<RouteOptions>(options =>
 
 // Add services to the container.
 ODataConventionModelBuilder modelBuilder = new();
+modelBuilder.EntitySet<AISystemPrompt>("AISystemPrompt");
 modelBuilder.EntitySet<AITag>("AITag");
 modelBuilder.EntitySet<AIPrompt>("AIPrompt");
 modelBuilder.EntitySet<ApplicationUserDto>("User");
@@ -263,8 +264,18 @@ using (var scope = app.Services.CreateScope())
         };
 
         await userManager.CreateAsync(normalUser, "testUser123!");
-        
 
+        if (File.Exists("AISystemPrompt.Data.json"))
+        {
+            var json = File.ReadAllText("AISystemPrompt.Data.json");
+            var data = JsonSerializer.Deserialize<AISystemPrompt[]>(json);
+
+            if (data != null)
+            {
+                ctx.AISystemPrompt.AddRange(data);
+                ctx.SaveChanges();
+            }
+        }
         if (File.Exists("AITag.Data.json"))
         {
             var json = File.ReadAllText("AITag.Data.json");

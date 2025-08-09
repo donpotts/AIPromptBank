@@ -17,6 +17,21 @@ namespace MyAIPrompt.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
+            modelBuilder.Entity("AIPromptAISystemPrompt", b =>
+                {
+                    b.Property<Guid>("AIPromptId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("AISystemPromptId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("AIPromptId", "AISystemPromptId");
+
+                    b.HasIndex("AISystemPromptId");
+
+                    b.ToTable("AIPromptAISystemPrompt");
+                });
+
             modelBuilder.Entity("AIPromptAITag", b =>
                 {
                     b.Property<Guid>("AIPromptId")
@@ -271,6 +286,38 @@ namespace MyAIPrompt.Migrations
                     b.ToTable("AIPrompt");
                 });
 
+            modelBuilder.Entity("MyAIPrompt.Shared.Models.AISystemPrompt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Hash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsSynced")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AISystemPrompt");
+                });
+
             modelBuilder.Entity("MyAIPrompt.Shared.Models.AITag", b =>
                 {
                     b.Property<Guid>("Id")
@@ -295,6 +342,21 @@ namespace MyAIPrompt.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AITag");
+                });
+
+            modelBuilder.Entity("AIPromptAISystemPrompt", b =>
+                {
+                    b.HasOne("MyAIPrompt.Shared.Models.AIPrompt", null)
+                        .WithMany()
+                        .HasForeignKey("AIPromptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyAIPrompt.Shared.Models.AISystemPrompt", null)
+                        .WithMany()
+                        .HasForeignKey("AISystemPromptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIPromptAITag", b =>

@@ -23,9 +23,9 @@
         <MudToolBar>
             <MudLink Href="/" Class="d-flex px-4" Color="Color.Inherit">Home</MudLink>
             <AuthorizeView>
-            <MudLink Href="/aiprompt" Class="d-flex px-4" Color="Color.Inherit">AIPrompt</MudLink>
-        <MudLink Href="/aitag" Class="d-flex px-4" Color="Color.Inherit">AITag</MudLink>
-
+                <MudLink Href="/aisystemprompt" Class="d-flex px-4" Color="Color.Inherit">AI System Prompt</MudLink>
+                <MudLink Href="/aiprompt" Class="d-flex px-4" Color="Color.Inherit">AI Prompt</MudLink>
+                <MudLink Href="/aitag" Class="d-flex px-4" Color="Color.Inherit">AI Tag</MudLink>
             </AuthorizeView>
             <AuthorizeView Roles="Administrator">
                 <MudLink Href="/user" Class="d-flex px-4" Color="Color.Inherit">User</MudLink>
@@ -53,9 +53,9 @@
     <MudDrawer @bind-Open="drawerOpen" ClipMode="DrawerClipMode.Docked">
         <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
         <AuthorizeView>
-            <MudNavLink Href="/aiprompt" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.TableChart">AIPrompt</MudNavLink>
-        <MudNavLink Href="/aitag" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.TableChart">AITag</MudNavLink>
-
+            <MudNavLink Href="/aisystemprompt" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.TableChart">AI System Prompt</MudNavLink>
+            <MudNavLink Href="/aiprompt" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.TableChart">AI Prompt</MudNavLink>
+            <MudNavLink Href="/aitag" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.TableChart">AI Tag</MudNavLink>
         </AuthorizeView>
         <AuthorizeView Roles="Administrator">
             <MudNavLink Href="/user" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">User</MudNavLink>

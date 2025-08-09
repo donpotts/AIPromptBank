@@ -1,0 +1,117 @@
+﻿@page "/hash-tester"
+@using Microsoft.Extensions.Logging
+@inject ILogger<PromptHashTester> Logger
+
+<MudPaper Class="pa-4" Elevation="4">
+    <MudText Typo="Typo.h5">🔍 Prompt Hash & Deduplication Tester</MudText>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunTest" Class="mt-2 mb-4">
+        Run Diagnostics
+    </MudButton>
+
+    <MudText Typo="Typo.subtitle2" Color="Color.Secondary">Results:</MudText>
+    <MudPaper Class="pa-2" Style="max-height: 400px; overflow-y: auto; background-color: var(--mud-palette-background)">
+        @if (Results.Count == 0)
+        {
+            <MudText>No results yet. Click the button to run the test.</MudText>
+        }
+        else
+        {
+            <MudList T="string" Dense="true">
+                @foreach (var line in Results)
+                {
+                    <MudListItem>@line</MudListItem>
+                }
+            </MudList>
+        }
+    </MudPaper>
+</MudPaper>
+
+@code {
+    private List<string> Results = new();
+
+    private void RunTest()
+    {
+        Results.Clear();
+        Results = PromptHashTestRunner.Run();
+
+        foreach (var line in Results)
+        {
+            Logger.LogInformation(line);
+        }
+    }
+
+    public static class PromptHashTestRunner
+    {
+        public static List<string> Run()
+        {
+            var output = new List<string>();
+            var prompts = new List<(string Title, string Content)>
+                                {
+                                    ("How to use MudBlazor", "A guide to MudBlazor components and layout."),
+                                    ("MudBlazor Tips", "Best practices for building UI with MudBlazor."),
+                                    ("Blazor State Management", "Understanding state in Blazor apps."),
+                                    ("Blazor Routing", "How to configure routes in Blazor."),
+                                    ("Blazor Lifecycle", "Explaining lifecycle methods in Blazor."),
+                                    ("Blazor Forms", "Creating forms with validation in Blazor."),
+                                    ("Blazor and JavaScript", "Interop between Blazor and JS."),
+                                    ("Blazor Performance", "Optimizing Blazor for speed."),
+                                    ("Blazor Accessibility", "Making Blazor apps accessible."),
+                                    ("Blazor Theme Switching", "Implementing light/dark mode."),
+                                    ("Blazor Offline Support", "Strategies for offline-first Blazor apps."),
+                                    ("Blazor Sync Logic", "Handling sync and conflict resolution."),
+                                    ("Blazor Tag Filtering", "Multi-tag filtering in Blazor."),
+                                    ("Blazor Chip Styling", "Styling MudBlazor chips for contrast."),
+                                    ("Blazor UX Patterns", "Common UX patterns in Blazor."),
+                                    ("Blazor Prompt Schema", "Designing prompt/tag schemas."),
+                                    ("Blazor Deduplication", "Avoiding duplicate prompts."),
+                                    ("Blazor Hashing", "Using SHA256 for prompt integrity."),
+                                    ("Blazor Prompt Builder", "Encapsulating prompt creation logic."),
+                                    ("Blazor Dialogs", "Using MudDialog for modal interactions."),
+
+                                    // 🔁 Near-duplicates
+                                    ("MudBlazor Guide", "A tutorial on MudBlazor components and layout."),
+                                    ("Tips for MudBlazor", "UI best practices using MudBlazor."),
+                                    ("Managing State in Blazor", "How Blazor handles state."),
+                                    ("Routing in Blazor", "Configuring routes in Blazor apps."),
+                                    ("Blazor Lifecycle Explained", "Lifecycle methods in Blazor components."),
+
+                                    // ⚠️ Exact duplicates
+                                    ("How to use MudBlazor", "A guide to MudBlazor components and layout."),
+                                    ("Blazor Sync Logic", "Handling sync and conflict resolution.")
+                                };
+
+            var hashMap = new Dictionary<string, List<(string Title, string Content)>>();
+
+            foreach (var (title, content) in prompts)
+            {
+                string hash = HashHelper.ComputeHash(title, content);
+                if (!hashMap.ContainsKey(hash))
+                    hashMap[hash] = new();
+                hashMap[hash].Add((title, content));
+            }
+
+            output.Add("🔍 Exact Hash Duplicates:");
+            foreach (var kvp in hashMap.Where(kvp => kvp.Value.Count > 1))
+            {
+                output.Add($"Hash: {kvp.Key}");
+                foreach (var (title, _) in kvp.Value)
+                    output.Add($"  - {title}");
+            }
+
+            output.Add("\n🔍 Fuzzy Matches (Levenshtein ≤ 10):");
+            for (int i = 0; i < prompts.Count; i++)
+            {
+                for (int j = i + 1; j < prompts.Count; j++)
+                {
+                    int distance = HashHelper.ComputeLevenshteinDistance(prompts[i].Content, prompts[j].Content);
+                    if (distance <= 10)
+                    {
+                        output.Add($"  - \"{prompts[i].Title}\" ↔ \"{prompts[j].Title}\" (Distance: {distance})");
+                    }
+                }
+            }
+
+            return output;
+        }
+    }
+}

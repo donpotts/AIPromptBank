@@ -1,0 +1,122 @@
+{
+  "name": "MyAIPrompt",
+  "displayName": "AI Prompt Bank",
+  "features": [
+    "BlazorWasm"
+  ],
+  "entities": {
+    "AIPrompt": {
+      "primaryKey": "Id",
+      "noGeneratedIdentity": false,
+      "properties": {
+        "Id": {
+          "type": "Guid"
+        },
+        "Title": {
+          "type": "string"
+        },
+        "Content": {
+          "type": "string"
+        },
+        "CreateDate": {
+          "type": "DateTimeOffset"
+        },
+        "ModifiedDate": {
+          "type": "DateTimeOffset"
+        },
+        "IsSynced": {
+          "type": "bool"
+        },
+        "IsDeleted": {
+          "type": "bool"
+        },
+        "Hash": {
+          "type": "string"
+        }
+      },
+      "navigation": {
+        "AITag": {
+          "target": "AITag",
+          "hasMany": true,
+          "displayProperty": "Name"
+        },
+        "AISystemPrompt": {
+          "target": "AISystemPrompt",
+          "hasMany": true,
+          "displayProperty": "Title"
+        }
+      }
+    },
+    "AISystemPrompt": {
+      "primaryKey": "Id",
+      "noGeneratedIdentity": false,
+      "properties": {
+        "Id": {
+          "type": "Guid"
+        },
+        "Title": {
+          "type": "string"
+        },
+        "Content": {
+          "type": "string"
+        },
+        "CreateDate": {
+          "type": "DateTimeOffset"
+        },
+        "ModifiedDate": {
+          "type": "DateTimeOffset"
+        },
+        "IsSynced": {
+          "type": "bool"
+        },
+        "IsDeleted": {
+          "type": "bool"
+        },
+        "Hash": {
+          "type": "string"
+        }
+      },
+      "navigation": {
+        "AIPrompt": {
+          "target": "AIPrompt",
+          "hasMany": true,
+          "displayProperty": "Title"
+        }
+      }
+    },
+    "AITag": {
+      "primaryKey": "Id",
+      "noGeneratedIdentity": false,
+      "properties": {
+        "Id": {
+          "type": "Guid"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "Color": {
+          "type": "string"
+        },
+        "CreateDate": {
+          "type": "DateTimeOffset"
+        },
+        "ModifiedDate": {
+          "type": "DateTimeOffset"
+        }
+      },
+      "navigation": {
+        "AIPrompt": {
+          "target": "AIPrompt",
+          "hasMany": true,
+          "displayProperty": "Title"
+        }
+      }
+    }
+  },
+  "zipCsvName": "C:\\Generator\\fycs2k3i.csv",
+  "usingMudBlazor": true,
+  "usingMudBlazorTopOption": true
+}

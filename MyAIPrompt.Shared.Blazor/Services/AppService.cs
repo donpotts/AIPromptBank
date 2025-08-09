@@ -294,6 +294,90 @@ public class AppService(
         await HandleResponseErrorsAsync(response);
     }
 
+    public async Task<AISystemPrompt[]?> ListAISystemPromptAsync()
+    {
+        var token = await authenticationStateProvider.GetBearerTokenAsync()
+            ?? throw new Exception("Not authorized");
+
+        HttpRequestMessage request = new(HttpMethod.Get, "/api/aisystemprompt");
+        request.Headers.Authorization = new("Bearer", token);
+
+        var response = await httpClient.SendAsync(request);
+
+        await HandleResponseErrorsAsync(response);
+
+        return await response.Content.ReadFromJsonAsync<AISystemPrompt[]>();
+    }
+
+    public Task<ODataResult<AISystemPrompt>?> ListAISystemPromptODataAsync(
+        int? top = null,
+        int? skip = null,
+        string? orderby = null,
+        string? filter = null,
+        bool count = false,
+        string? expand = null)
+    {
+        return GetODataAsync<AISystemPrompt>("AISystemPrompt", top, skip, orderby, filter, count, expand);
+    }
+
+    public async Task<AISystemPrompt?> GetAISystemPromptByIdAsync(Guid key)
+    {
+        var token = await authenticationStateProvider.GetBearerTokenAsync()
+            ?? throw new Exception("Not authorized");
+
+        HttpRequestMessage request = new(HttpMethod.Get, $"/api/aisystemprompt/{key}");
+        request.Headers.Authorization = new("Bearer", token);
+
+        var response = await httpClient.SendAsync(request);
+
+        await HandleResponseErrorsAsync(response);
+
+        return await response.Content.ReadFromJsonAsync<AISystemPrompt>();
+    }
+
+    public async Task UpdateAISystemPromptAsync(Guid key, AISystemPrompt data)
+    {
+        var token = await authenticationStateProvider.GetBearerTokenAsync()
+            ?? throw new Exception("Not authorized");
+
+        HttpRequestMessage request = new(HttpMethod.Put, $"/api/aisystemprompt/{key}");
+        request.Headers.Authorization = new("Bearer", token);
+        request.Content = JsonContent.Create(data);
+
+        var response = await httpClient.SendAsync(request);
+
+        await HandleResponseErrorsAsync(response);
+    }
+
+    public async Task<AISystemPrompt?> InsertAISystemPromptAsync(AISystemPrompt data)
+    {
+        var token = await authenticationStateProvider.GetBearerTokenAsync()
+            ?? throw new Exception("Not authorized");
+
+        HttpRequestMessage request = new(HttpMethod.Post, "/api/aisystemprompt");
+        request.Headers.Authorization = new("Bearer", token);
+        request.Content = JsonContent.Create(data);
+
+        var response = await httpClient.SendAsync(request);
+
+        await HandleResponseErrorsAsync(response);
+
+        return await response.Content.ReadFromJsonAsync<AISystemPrompt>();
+    }
+
+    public async Task DeleteAISystemPromptAsync(Guid key)
+    {
+        var token = await authenticationStateProvider.GetBearerTokenAsync()
+            ?? throw new Exception("Not authorized");
+
+        HttpRequestMessage request = new(HttpMethod.Delete, $"/api/aisystemprompt/{key}");
+        request.Headers.Authorization = new("Bearer", token);
+
+        var response = await httpClient.SendAsync(request);
+
+        await HandleResponseErrorsAsync(response);
+    }
+
     public async Task<AITag[]?> ListAITagAsync()
     {
         var token = await authenticationStateProvider.GetBearerTokenAsync()

@@ -9,9 +9,9 @@
 
 <PageTitle>AITag</PageTitle>
 
-<div class="mb-3">
+@* <div class="mb-3">
     <MudText Typo="Typo.h3">AITag</MudText>
-</div>
+</div> *@
 
 <MudStack AlignItems="AlignItems.End" Class="mb-3">
     <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.AddCircleOutline" Color="Color.Primary" OnClick="@(e => OnAdd())">Add</MudButton>
@@ -19,7 +19,7 @@
 
 <MudDataGrid T="AITag" @ref="grid" ServerData="(new Func<GridState<AITag>, Task<GridData<AITag>>>(ServerReload))" Filterable="true">
     <ToolBarContent>
-         <MudText Typo="Typo.h6">AITag</MudText>
+         <MudText Typo="Typo.h6">AI Tag</MudText>
          <MudSpacer />
          <MudTextField T="string" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Immediate="true" ValueChanged="@(value => SearchChanged(value))"></MudTextField>
          <MudButton Color="Color.Primary" OnClick="ExportAllToCSV">Export</MudButton>
@@ -41,7 +41,7 @@
         @* <PropertyColumn Property="x => x!.Color" Title="Color" /> *@
         @* <PropertyColumn Property="x => x!.CreateDate" Title="CreateDate" /> *@
         @* <PropertyColumn Property="x => x!.ModifiedDate" Title="ModifiedDate" /> *@
-        <TemplateColumn Title="AIPrompt" Sortable="false" Filterable="false">
+        <TemplateColumn Title="AI Prompt" Sortable="false" Filterable="false">
             <CellTemplate>
                 @string.Join(", ", context.Item.AIPrompt?.Select(x => x.Title?.ToString() ?? string.Empty) ?? [])
             </CellTemplate>

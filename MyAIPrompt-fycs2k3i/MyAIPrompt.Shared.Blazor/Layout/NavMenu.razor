@@ -1,0 +1,129 @@
+@using System.Security.Claims
+@inject AppService AppService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<MudThemeProvider @ref="@mudThemeProvider" @bind-IsDarkMode="@_dark" />
+<MudAppBar>
+<AuthorizeView>
+    @if (!CheckedVariable)
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+    }
+</AuthorizeView>
+    <MudText Class="d-flex mr-8">AI Prompt Bank</MudText>
+    <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+        <MudTooltip Text="@tooltipText">    
+            <MudSwitch T="bool" Class="d-flex justify-content-start " Value="CheckedVariable" ValueChanged="@(e => OnSwitchValueChanged((bool)e))" Color="Color.Success" UncheckedColor="Color.Secondary" />
+        </MudTooltip>
+    </MudHidden>
+    <MudSpacer />
+    <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true" IsHiddenChanged="ScreenSizeChanged">
+    @if (CheckedVariable)
+    {
+        <MudToolBar>
+            <MudLink Href="/" Class="d-flex px-4" Color="Color.Inherit">Home</MudLink>
+            <AuthorizeView>
+            <MudLink Href="/aiprompt" Class="d-flex px-4" Color="Color.Inherit">AIPrompt</MudLink>
+        <MudLink Href="/aisystemprompt" Class="d-flex px-4" Color="Color.Inherit">AISystemPrompt</MudLink>
+        <MudLink Href="/aitag" Class="d-flex px-4" Color="Color.Inherit">AITag</MudLink>
+
+            </AuthorizeView>
+            <AuthorizeView Roles="Administrator">
+                <MudLink Href="/user" Class="d-flex px-4" Color="Color.Inherit">User</MudLink>
+            </AuthorizeView>
+            <AuthorizeView>
+                <Authorized>
+                    <MudLink Href="/account/changePassword" Class="d-flex px-4" Color="Color.Inherit">Change Password</MudLink>
+                    <MudLink Href="/logout" Class="d-flex px-4" Color="Color.Inherit">Logout (@context.User.Identity!.Name)</MudLink>
+                </Authorized>
+                <NotAuthorized>
+                    <MudLink Href="/register" Class="d-flex px-4" Color="Color.Inherit">Register</MudLink>
+                    <MudLink Href="/login" Class="d-flex px-4" Color="Color.Inherit">Login</MudLink>
+                </NotAuthorized>
+            </AuthorizeView>
+        </MudToolBar>
+    }
+    </MudHidden>
+    <MudIconButton Icon="@Icons.Material.Filled.WbSunny" Color="@(_dark ? Color.Warning : Color.Inherit)" Edge="Edge.Start" OnClick="@(() => _dark = !_dark)" />
+    <MudLink Href="https://www.radendpoint.com/" Color="Color.Inherit">About</MudLink>
+</MudAppBar>
+@if (!CheckedVariable)
+{
+<AuthorizeView Context="authContext">
+<Authorized>
+    <MudDrawer @bind-Open="drawerOpen" ClipMode="DrawerClipMode.Docked">
+        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+        <AuthorizeView>
+            <MudNavLink Href="/aiprompt" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.TableChart">AIPrompt</MudNavLink>
+        <MudNavLink Href="/aisystemprompt" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.TableChart">AISystemPrompt</MudNavLink>
+        <MudNavLink Href="/aitag" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.TableChart">AITag</MudNavLink>
+
+        </AuthorizeView>
+        <AuthorizeView Roles="Administrator">
+            <MudNavLink Href="/user" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">User</MudNavLink>
+        </AuthorizeView>
+        <AuthorizeView>
+            <Authorized>
+                <MudNavLink Href="/account/changePassword" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Edit">Change Password</MudNavLink>
+                <MudNavLink Href="/logout" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Logout">Logout (@authContext.User.Identity!.Name)</MudNavLink>
+            </Authorized>
+            <NotAuthorized>
+                <MudNavLink Href="/register" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Edit">Register</MudNavLink>
+                <MudNavLink Href="/login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Login">Login</MudNavLink>
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudDrawer>
+</Authorized>
+</AuthorizeView>
+}
+
+@code {
+    private bool drawerOpen = true;
+    bool _dark = true;
+    private bool isDarkMode;
+    private MudThemeProvider? mudThemeProvider;
+    private bool isSwitchChecked = true;
+    private bool CheckedVariable;
+    private string tooltipText => isSwitchChecked ? "Top Menu ON" : "Top Menu is OFF";
+
+    private void DrawerToggle()
+    {
+        drawerOpen = !drawerOpen;
+    }
+
+    public void ScreenSizeChanged(bool hidden)
+    {
+        if (hidden)
+            CheckedVariable = false;
+        else
+            CheckedVariable = isSwitchChecked;
+    }
+
+    public void OnSwitchValueChanged(bool checkedValue)
+    {
+        CheckedVariable = checkedValue;
+        if (checkedValue)
+            isSwitchChecked = true;
+        else
+            isSwitchChecked = false;
+    }
+                                                        
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && mudThemeProvider != null)
+        {
+            isDarkMode = await mudThemeProvider.GetSystemPreference();
+            StateHasChanged();
+
+            await mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+        }
+    }
+
+    protected Task OnSystemPreferenceChanged(bool isDarkMode)
+    {
+        this.isDarkMode = isDarkMode;
+        StateHasChanged();
+
+        return Task.CompletedTask;
+    }
+}

@@ -8,9 +8,9 @@
 
 <PageTitle>AIPrompt</PageTitle>
 
-<div class="mb-3">
-    <MudText Typo="Typo.h3">AIPrompt</MudText>
-</div>
+@* <div class="mb-3">
+    <MudText Typo="Typo.h3">AI Prompt</MudText>
+</div> *@
 
 <MudStack AlignItems="AlignItems.End" Class="mb-3">
     <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.AddCircleOutline" Color="Color.Primary" OnClick="@(e => OnAdd())">Add</MudButton>
@@ -18,7 +18,7 @@
 
 <MudDataGrid T="AIPrompt" @ref="grid" ServerData="(new Func<GridState<AIPrompt>, Task<GridData<AIPrompt>>>(ServerReload))" Filterable="true">
     <ToolBarContent>
-         <MudText Typo="Typo.h6">AIPrompt</MudText>
+         <MudText Typo="Typo.h6">AI Prompt</MudText>
          <MudSpacer />
          <MudTextField T="string" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Immediate="true" ValueChanged="@(value => SearchChanged(value))"></MudTextField>
          <MudButton Color="Color.Primary" OnClick="ExportAllToCSV">Export</MudButton>
@@ -32,7 +32,7 @@
         @* <PropertyColumn Property="x => x!.IsSynced" Title="IsSynced" /> *@
         @* <PropertyColumn Property="x => x!.IsDeleted" Title="IsDeleted" /> *@
         @* <PropertyColumn Property="x => x!.Hash" Title="Hash" /> *@
-        <TemplateColumn Title="AITag" Sortable="false" Filterable="false">
+        <TemplateColumn Title="AI Tag" Sortable="false" Filterable="false">
             <CellTemplate>
                 @foreach (var tag in context.Item.AITag ?? Enumerable.Empty<AITag>())
                 {
@@ -41,6 +41,11 @@
                         @tag.Name
                     </MudChip>
                 }
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="AISystemPrompt" Sortable="false" Filterable="false">
+            <CellTemplate>
+                @string.Join(", ", context.Item.AISystemPrompt?.Select(x => x.Title?.ToString() ?? string.Empty) ?? [])
             </CellTemplate>
         </TemplateColumn>
         @* <TemplateColumn Title="AITag" Sortable="false" Filterable="false">
@@ -133,7 +138,7 @@
                    filter = $"contains(tolower(Title), '{_searchString}') or contains(tolower(Content), '{_searchString}') or contains(tolower(Hash), '{_searchString}') ";
                }
             }
-            result = await AppService.ListAIPromptODataAsync(top, skip, orderby, filter, true, "AITag");
+            result = await AppService.ListAIPromptODataAsync(top, skip, orderby, filter, true, "AITag,AISystemPrompt");
         }
         catch (Exception ex)
         {
@@ -226,16 +231,16 @@
             {
                 var ar = result?.Value.ToList().Select(x => new
                 {
-                        x.Id,
-    x.Title,
-    x.Content,
-    x.CreateDate,
-    x.ModifiedDate,
-    x.IsSynced,
-    x.IsDeleted,
-    x.Hash,
-AITag = string.Join(", ", x.AITag?.Select(x => x.Name?.ToString() ?? string.Empty) ?? []),
-
+                    x.Id,
+                    x.Title,
+                    x.Content,
+                    x.CreateDate,
+                    x.ModifiedDate,
+                    x.IsSynced,
+                    x.IsDeleted,
+                    x.Hash,
+                    AITag = string.Join(", ", x.AITag?.Select(x => x.Name?.ToString() ?? string.Empty) ?? []),
+                    AISystemPrompt = string.Join(", ", x.AISystemPrompt?.Select(x => x.Title?.ToString() ?? string.Empty) ?? []),
                 });
 
                 using var memoryStream = new MemoryStream();

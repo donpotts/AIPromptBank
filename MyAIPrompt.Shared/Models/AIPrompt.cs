@@ -31,8 +31,11 @@ public class AIPrompt
     public bool IsDeleted { get; set; }
 
     [DataMember]
-    public string? Hash { get; set; }
+    public string? Hash { get; set; } 
 
     [DataMember]
     public List<AITag>? AITag { get; set; }
+
+    [DataMember]
+    public List<AISystemPrompt>? AISystemPrompt { get; set; }
 }
